@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin: 0 0 20px 0;
+        }
+
+        h3 {
+            margin: 35px 0 5px 0;
+        }
+
+        .info {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .invite-section {
+            margin-top: 20px;
+        }
+
+        .formation-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 5px;
+            height: 80%;
+            margin-top: 10px;
+        }
+
+        .formation-section select {
+            width: 75%;
+            margin-right: 5px;
+            margin: 0px 4px 0px 0px;
+            padding: 9px 10px 9px 10px;
+        }
+
+        .button-spacing {
+            margin-bottom: 15px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>회원 정보</h2>
+        <div class="info">
+            <p><strong>아이디:</strong> <span id="memberUsername"></span></p>
+            <p><strong>선호 포지션 1:</strong> <span id="position1"></span></p>
+            <p><strong>선호 포지션 2:</strong> <span id="position2"></span></p>
+            <p><strong>선호 포지션 3:</strong> <span id="position3"></span></p>
+        </div>
+
+        <div class="invite-section">
+            <h3>초대코드 생성</h3>
+            <div class="formation-section">
+                <label for="formationSelect">포메이션:</label>
+                <select id="formationSelect">
+                    <option value="442">4-4-2</option>
+                    <option value="4231">4-2-3-1</option>
+                </select>
+            </div>
+        
+            <input type="text" id="inviteCodeInput" style="margin-top: 15px; margin-bottom: 15px;" placeholder="초대코드 입력">
+            <button onclick="createInviteCode()">초대코드 생성</button>
+        </div>
+
+        <div class="invite-section">
+            <h3>초대코드 입력</h3>
+            <input type="text" id="joinInviteCodeInput" placeholder="초대코드 입력">
+            <button onclick="joinInviteCode()" class="button-spacing">참여</button>
+        </div>
+
+        <button onclick="logout()">로그아웃</button>
+    </div>
+
+    <script>
+        const userData = JSON.parse(localStorage.getItem('userData'));
+
+        if (!userData) {
+            alert('로그인이 필요합니다.');
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('memberUsername').textContent = userData.username;
+            document.getElementById('position1').textContent = userData.positions[0];
+            document.getElementById('position2').textContent = userData.positions[1];
+            document.getElementById('position3').textContent = userData.positions[2];
+
+            const selectedFormation = userData.formation || '442';
+            document.getElementById('formationSelect').value = selectedFormation;
+        }
+
+        document.getElementById('formationSelect').addEventListener('change', (event) => {
+            const selectedFormation = event.target.value;
+            userData.formation = selectedFormation;
+            localStorage.setItem('userData', JSON.stringify(userData));
+        });
+
+        function redirectToFormationPage(formation) {
+            if (formation === "442") {
+                window.location.href = "stadium442.html";
+            } else if (formation === "4231") {
+                window.location.href = "stadium4231.html";
+            } else {
+                alert("지원하지 않는 포메이션입니다.");
+            }
+        }
+
+        function createInviteCode() {
+            const inviteCode = document.getElementById('inviteCodeInput').value;
+            const username = userData.username;
+            const formation = document.getElementById('formationSelect').value;
+        
+            if (!inviteCode) {
+                alert('초대코드를 입력하세요.');
+                return;
+            }
+        
+            userData.inviteCode = inviteCode;
+            localStorage.setItem('userData', JSON.stringify(userData));
+        
+            fetch('http://localhost:4000/invite/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ inviteCode, formation, username }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('초대코드가 생성되었습니다.');
+                        redirectToFormationPage(formation);
+                    } else {
+                        response.text().then(text => {
+                            alert(text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('초대코드 생성 중 오류:', error);
+                    alert('초대코드 생성 중 문제가 발생했습니다.');
+                });
+        }
+
+        function joinInviteCode() {
+            const inviteCode = document.getElementById('joinInviteCodeInput').value;
+            const username = userData.username;
+        
+            if (!inviteCode) {
+                alert('초대코드를 입력하세요.');
+                return;
+            }
+        
+            userData.inviteCode = inviteCode;
+            localStorage.setItem('userData', JSON.stringify(userData));
+        
+            fetch('http://localhost:4000/invite/join', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ inviteCode, username }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const formation = data.formation;
+                        redirectToFormationPage(formation);
+                    } else {
+                        alert('초대코드가 유효하지 않습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('초대코드 확인 중 오류:', error);
+                    alert('초대코드 확인 중 문제가 발생했습니다.');
+                });
+        }
+
+        function logout() {
+            localStorage.removeItem('userData');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

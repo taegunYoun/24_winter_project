@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input {
+            width: 92.5%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #007BFF;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">로그인</h2>
+        <input type="text" id="loginUsername" placeholder="아이디">
+        <input type="password" id="loginPassword" placeholder="비밀번호">
+        <button onclick="login()">로그인</button>
+        <a href="register_test.html">회원가입</a>
+    </div>
+
+    <script>
+        // 페이지 로드 후 초기 설정
+        document.addEventListener('DOMContentLoaded', () => {
+            const usernameInput = document.getElementById('loginUsername');
+            usernameInput.setAttribute('lang', 'en'); // 입력 언어를 영어로 설정
+            usernameInput.focus(); // 자동으로 포커스 설정
+        });
+
+        // 로그인 함수
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                alert('아이디와 비밀번호를 입력하세요.');
+                return;
+            }
+
+            // 서버로 로그인 요청
+            fetch('http://localhost:4000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        response.json().then((data) => {
+                            // 사용자 데이터를 로컬 스토리지에 저장
+                            localStorage.setItem('userData', JSON.stringify(data));
+                            // 회원 정보 페이지로 이동
+                            window.location.href = 'member.html';
+                        });
+                    } else {
+                        response.text().then((text) => {
+                            alert(text); // 서버에서 반환한 에러 메시지 표시
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('로그인 중 문제가 발생했습니다:', error);
+                    alert('로그인 중 문제가 발생했습니다.');
+                });
+        }
+
+        // 엔터키 이벤트 추가
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                login(); // 로그인 함수 호출
+            }
+        });
+    </script>
+</body>
+</html>

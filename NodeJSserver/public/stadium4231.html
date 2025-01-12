@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
+    <title>축구 경기장</title>
+    <style>
+        body {
+            font-family: "Orbit", serif;
+            font-weight: 400;
+            font-style: normal;
+            margin: 0;
+            background-color: lightgray;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .stadium {
+            width: 1000px;
+            height: 600px;
+            background: repeating-linear-gradient(
+                90deg,
+                #006400 0%, #006400 5%, 
+                #008000 5%, #008000 10%
+            );
+            position: relative;
+            box-shadow: 0 0 15px rgba(128, 128, 128, 1);
+            border: 5px solid white;
+        }
+
+        .center-line {
+            width: 2px;
+            height: 100%;
+            background-color: white;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .center-circle {
+            width: 150px;
+            height: 150px;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .center-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 페널티 서클 */
+        .half-circle {
+            width: 150px;
+            height: 150px;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+        .half-circle.left {
+            clip-path: polygon(100% 0%, 100% 100%, 83% 100%, 83% 0%);
+            top: 50%;
+            left: 150px;
+        }
+        .half-circle.right {
+            top: 50%;
+            right: -4px;
+            clip-path: polygon(0% 0%, 17% 0%, 17% 100%, 0% 100%);
+        }
+
+        /* 좌우 페널티 박스 */
+        .penalty-box {
+            width: 200px;
+            height: 400px;
+            border: 2px solid white;
+            position: absolute;
+        }
+
+        .penalty-box.left {
+            top: 50%;
+            left: 0; /* 경기장 외곽선에 맞춤 */
+            border-left: none; /* 경기장 외곽선과 맞닿는 부분 제거 */
+            transform: translateY(-50%);
+        }
+
+        .penalty-box.right {
+            top: 50%;
+            right: 0; /* 경기장 외곽선에 맞춤 */
+            border-right: none; /* 경기장 외곽선과 맞닿는 부분 제거 */
+            transform: translateY(-50%);
+        }
+
+        /* 골 에어리어 박스 (6야드 박스) */
+        .goal-area {
+            width: 100px;
+            height: 200px;
+            border: 2px solid white;
+            position: absolute;
+        }
+
+        .goal-area.left {
+            top: 50%;
+            left: 0; /* 경기장 외곽선에 맞춤 */
+            border-left: none; /* 경기장 외곽선과 맞닿는 부분 제거 */
+            transform: translateY(-50%);
+        }
+
+        .goal-area.right {
+            top: 50%;
+            right: 0; /* 경기장 외곽선에 맞춤 */
+            border-right: none; /* 경기장 외곽선과 맞닿는 부분 제거 */
+            transform: translateY(-50%);
+        }
+
+        /* 골대 */
+        .goal-box {
+            width: 50px;
+            height: 120px;
+            position: absolute;
+            background-image: 
+                linear-gradient(white 1px, transparent 1px),
+                linear-gradient(90deg, white 1px, transparent 1px);
+            background-size: 10px 10px; /* 격자 크기 조정 */
+            border: 2px solid white;
+        }
+
+        .goal-box.left {
+            top: 50%;
+            left: -55px; /* 경기장 밖으로 위치 */
+            transform: translateY(-50%);
+            box-shadow: -5px 0 15px rgba(128, 128, 128, 1);
+            background-color: #008000;
+        }
+
+        .goal-box.right {
+            top: 50%;
+            right: -55px; /* 경기장 밖으로 위치 */
+            transform: translateY(-50%);
+            box-shadow: 5px 0 15px rgba(128, 128, 128, 0.5);
+            background-color: #006400;
+        }
+        
+        .ball {
+            width: 25px;
+            height: 25px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            border: 2px solid white;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 94px;
+            left: 15px;
+            background-color: white;
+            color: black;
+            padding: 10px;
+            border-radius: 8px;
+            border: 3px solid white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            width: 150px;
+            z-index: -10; /* 요소를 다른 요소들 위로 올리기 */
+        }
+
+        .user-info p {
+            margin: 5px 0;
+        }
+
+        .user-info h2 {
+            margin: 0 0 5px 0;
+            text-align: center;
+            border-bottom: 3px solid lightgray;
+            padding-bottom: 10px;
+        }
+
+        .invite-users {
+            position: absolute;
+            top: 94px;
+            right: 15px;
+            background-color: white;
+            padding: 10px;
+            color: black;
+            border-radius: 8px;
+            border: 3px solid white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            width: 150px;
+            height: 585px;
+            overflow-y: auto;
+            z-index: -10;
+        }
+
+        .invite-users h3 {
+            margin: 0px;
+            padding: 5px;
+            border-bottom: 3px solid lightgray;
+            text-align: center;
+        }
+
+        .invite-users p {
+            margin: 5px;
+            text-align: right;
+        }
+
+        .user-item {
+            height: 30px;
+            display: flex;
+            flex-direction: row-reverse; /* 순서를 반대로 설정 */
+            align-items: center;
+            margin: 5px;
+        }
+
+        .user-item p {
+            margin-left: 10px;
+        }
+
+        .user-item .circle {
+            width: 12px;
+            height: 12px;
+            background-color: #008000;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 사용자 정보 -->
+    <div class="user-info">
+        <h2>회원 정보</h2>
+        <p><strong>아이디:</strong> <span id="memberUsername"></span></p>
+        <p><strong>선호 포지션 1:</strong> <span id="position1"></span></p>
+        <p><strong>선호 포지션 2:</strong> <span id="position2"></span></p>
+        <p><strong>선호 포지션 3:</strong> <span id="position3"></span></p>
+    </div>
+
+    <div class="stadium">
+        <!-- 경기장 내용 -->
+        <div class="center-line"></div>
+        <div class="center-circle"></div>
+        <div class="center-dot"></div>
+        <div class="half-circle left"></div>
+        <div class="penalty-box left"></div>
+        <div class="penalty-box right"></div>
+        <div class="half-circle right"></div>
+        <div class="goal-area left"></div>
+        <div class="goal-area right"></div>
+        <div class="goal-box left"></div>
+        <div class="goal-box right"></div>
+    </div>
+
+    <!-- 초대코드에 포함된 사용자 목록 (오른쪽 상단) -->
+    <div class="invite-users">
+        <h3 style="border: 1.5px solid lightgray; border-radius: 5px;">초대코드<br><span id="inviteCode"></span></h3>
+        <h3 style="margin-top: 10px;">사용자 목록</h3>
+        <div id="inviteUsersList"></div>
+    </div>
+
+    <script>
+        // 로컬 스토리지에서 사용자 데이터 가져오기
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const inviteCode = userData.inviteCode;
+
+        if (!userData) {
+            alert('로그인이 필요합니다.');
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('memberUsername').textContent = userData.username;
+            document.getElementById('position1').textContent = userData.positions[0];
+            document.getElementById('position2').textContent = userData.positions[1];
+            document.getElementById('position3').textContent = userData.positions[2];
+        }
+
+        // 초대코드에 포함된 사용자 목록을 서버에서 가져오는 함수
+        fetch('http://localhost:4000/invite/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ inviteCode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const userList = data.users;
+                const inviteUsersList = document.getElementById('inviteUsersList');
+                const inviteCodeElement = document.getElementById('inviteCode');
+                inviteUsersList.innerHTML = ''; // 초기화
+                inviteCodeElement.textContent = inviteCode;
+
+                userList.forEach(user => {
+                    const userItem = document.createElement('div');
+                    userItem.classList.add('user-item');
+
+                    const userName = document.createElement('p');
+                    userName.textContent = user;
+
+                    const circle = document.createElement('div');
+                    circle.classList.add('circle');
+
+                    userItem.appendChild(circle);
+                    userItem.appendChild(userName);
+                    inviteUsersList.appendChild(userItem);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('사용자 목록 가져오기 실패:', error);
+        });
+
+        // 4231 포메이션 배열
+        const formation442 = [
+            { x: 0.1, y: 0.5 }, // 골키퍼
+            { x: 0.3, y: 0.2 }, { x: 0.3, y: 0.4 }, { x: 0.3, y: 0.6 }, { x: 0.3, y: 0.8 }, // 수비수 4명
+            { x: 0.45, y: 0.3 }, { x: 0.45, y: 0.7 }, // 볼란치 2명
+            { x: 0.65, y: 0.2 }, { x: 0.6, y: 0.5 }, { x: 0.65, y: 0.8 },// 미드필터 세명
+            { x: 0.75, y: 0.5 }, // 공격수 1명
+        ];
+
+        // 경기장에 공 추가
+        function addBallsToStadium() {
+            const stadium = document.querySelector('.stadium');
+            formation442.forEach((position, index) => {
+                const ball = document.createElement('div');
+                ball.classList.add('ball');
+                ball.style.left = `${position.x * 100}%`;
+                ball.style.top = `${position.y * 100}%`;
+                ball.setAttribute('title', `Player ${index + 1}`);
+                stadium.appendChild(ball);
+            });
+        }
+
+        // DOMContentLoaded 이벤트
+        document.addEventListener('DOMContentLoaded', addBallsToStadium);
+    </script>
+</body>
+</html>

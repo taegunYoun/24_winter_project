@@ -1,0 +1,59 @@
+[
+  {
+    "inviteCode": "1111",
+    "formation": "442",
+    "users": [
+      "qwer",
+      "asdf",
+      "zxcv",
+      "test1"
+    ]
+  },
+  {
+    "inviteCode": "2222",
+    "formation": "4231",
+    "users": [
+      "qwer",
+      "zxcv",
+      "asdf",
+      "james",
+      "test1"
+    ]
+  },
+  {
+    "inviteCode": "222",
+    "formation": "442",
+    "users": [
+      "asdf"
+    ]
+  },
+  {
+    "inviteCode": "3333",
+    "formation": "442",
+    "users": [
+      "qwer"
+    ]
+  },
+  {
+    "inviteCode": "4444",
+    "formation": "4231",
+    "users": [
+      "qwer"
+    ]
+  },
+  {
+    "inviteCode": "5555",
+    "formation": "442",
+    "users": [
+      "qwer"
+    ]
+  },
+  {
+    "inviteCode": "6666",
+    "formation": "4231",
+    "users": [
+      "qwer",
+      "asdf"
+    ]
+  }
+]

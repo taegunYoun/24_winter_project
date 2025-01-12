@@ -1,0 +1,47 @@
+[
+  {
+    "username": "qwer",
+    "password": "1234",
+    "positions": [
+      "a",
+      "b",
+      "c"
+    ]
+  },
+  {
+    "username": "asdf",
+    "password": "1234",
+    "positions": [
+      "a",
+      "b",
+      "c"
+    ]
+  },
+  {
+    "username": "zxcv",
+    "password": "1234",
+    "positions": [
+      "a",
+      "b",
+      "c"
+    ]
+  },
+  {
+    "username": "james",
+    "password": "1234",
+    "positions": [
+      "a",
+      "b",
+      "c"
+    ]
+  },
+  {
+    "username": "test1",
+    "password": "1234",
+    "positions": [
+      "ST",
+      "RW",
+      "LW"
+    ]
+  }
+]
