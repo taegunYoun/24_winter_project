@@ -112,7 +112,7 @@
     "positions": [
       {
         "position": 1,
-        "user": "2"
+        "user": "1"
       },
       {
         "position": 2,
@@ -124,7 +124,7 @@
       },
       {
         "position": 4,
-        "user": "2"
+        "user": "1"
       },
       {
         "position": 5,
@@ -140,7 +140,7 @@
       },
       {
         "position": 8,
-        "user": "2"
+        "user": "1"
       },
       {
         "position": 9,
@@ -152,7 +152,7 @@
       },
       {
         "position": 11,
-        "user": "2"
+        "user": "1"
       }
     ]
   }
