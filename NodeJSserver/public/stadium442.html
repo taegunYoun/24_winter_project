@@ -20,6 +20,39 @@
             height: 100vh;
         }
 
+        /* 포메이션 UI */
+        #formation-info {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #formation-info span {
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 20px; /* 간격 추가 */
+        }
+        
+        #formation-info button {
+            border: 3px solid white;
+            box-shadow: 0 0 15px rgba(128, 128, 128, 1);
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #008000;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #formation-info button:hover {
+            background-color: #006400;
+        }
+
         .stadium {
             width: 1000px;
             height: 600px;
@@ -156,16 +189,31 @@
             box-shadow: 5px 0 15px rgba(128, 128, 128, 0.5);
             background-color: #006400;
         }
-
+        
+        .player {
+            position: absolute;
+            display: flex; /* 플렉스 박스 활성화 */
+            flex-direction: column; /* 세로 정렬 */
+            align-items: center; /* 가로 중앙 정렬 */
+            justify-content: center; /* 세로 중앙 정렬 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+            transform: translate(-50%, -50%); /* 중앙 기준 이동 */
+        }
+    
         .ball {
             width: 25px;
             height: 25px;
             background-color: red;
             border-radius: 50%;
-            position: absolute;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+    
+        .username {
+            margin-top: 5px;
+            font-size: 18px;
+            color: white;
+            text-shadow: 1px 1px 2px black;
         }
 
         .user-info {
@@ -252,6 +300,12 @@
         <p><strong>선호 포지션 3:</strong> <span id="position3"></span></p>
     </div>
 
+    <!-- 포메이션 정보와 수정 버튼 -->
+    <div id="formation-info">
+        <span id="currentFormation"></span>
+        <button onclick="goToFormationChange()">포메이션 수정</button>
+    </div>
+
     <div class="stadium">
         <!-- 경기장 내용 -->
         <div class="center-line"></div>
@@ -265,6 +319,52 @@
         <div class="goal-area right"></div>
         <div class="goal-box left"></div>
         <div class="goal-box right"></div>
+
+        <!-- 공과 사용자 이름 -->
+        <div class="player" style="left: 15%; top: 53%;">
+            <div class="ball"></div>
+            <p id="username1" class="username"></p> <!-- 골키퍼 -->
+        </div>
+        <div class="player" style="left: 30%; top: 23%;">
+            <div class="ball"></div>
+            <p id="username2" class="username"></p> <!-- LB -->
+        </div>
+        <div class="player" style="left: 30%; top: 43%;">
+            <div class="ball"></div>
+            <p id="username3" class="username"></p> <!-- CB -->
+        </div>
+        <div class="player" style="left: 30%; top: 63%;">
+            <div class="ball"></div>
+            <p id="username4" class="username"></p> <!-- CB -->
+        </div>
+        <div class="player" style="left: 30%; top: 83%;">
+            <div class="ball"></div>
+            <p id="username5" class="username"></p> <!-- RB -->
+        </div>
+        <div class="player" style="left: 45%; top: 23%;">
+            <div class="ball"></div>
+            <p id="username6" class="username"></p> <!-- LM -->
+        </div>
+        <div class="player" style="left: 45%; top: 43%;">
+            <div class="ball"></div>
+            <p id="username7" class="username"></p> <!-- CM -->
+        </div>
+        <div class="player" style="left: 45%; top: 63%;">
+            <div class="ball"></div>
+            <p id="username8" class="username"></p> <!-- CM -->
+        </div>
+        <div class="player" style="left: 45%; top: 83%;">
+            <div class="ball"></div>
+            <p id="username9" class="username"></p> <!-- RM -->
+        </div>
+        <div class="player" style="left: 60%; top: 43%;">
+            <div class="ball"></div>
+            <p id="username10" class="username"></p> <!-- ST -->
+        </div>
+        <div class="player" style="left: 60%; top: 63%;">
+            <div class="ball"></div>
+            <p id="username11" class="username"></p> <!-- ST -->
+        </div>
     </div>
 
     <!-- 초대코드에 포함된 사용자 목록 (오른쪽 상단) -->
@@ -288,6 +388,39 @@
             document.getElementById('position2').textContent = userData.positions[1];
             document.getElementById('position3').textContent = userData.positions[2];
         }
+
+        fetch('http://localhost:4000/invite/positions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ inviteCode })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 포메이션 정보 표시
+                    document.getElementById('currentFormation').textContent = `포메이션: ${data.formation}`;
+
+                    // 포지션별 사용자 정보 표시
+                    const positions = data.positions;
+        
+                    // 포지션 데이터를 화면에 출력
+                    positions.forEach(position => {
+                        const usernameElement = document.getElementById(`username${position.position}`);
+                        if (usernameElement) {
+                            usernameElement.textContent = position.user || '미지정';
+                        }
+                    });
+                } else {
+                    console.error('포지션 데이터를 가져오지 못했습니다:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('오류 발생:', error);
+            });
+            
+        function goToFormationChange() {
+                    window.location.href = 'stadium442_change.html';
+                }
 
         // 초대코드에 포함된 사용자 목록을 서버에서 가져오는 함수
         fetch('http://localhost:4000/invite/users', {
@@ -325,27 +458,6 @@
         .catch(error => {
             console.error('사용자 목록 가져오기 실패:', error);
         });
-
-        // 442 포메이션 배열
-        const formation442 = [
-            { x: 0.1, y: 0.5 }, // 골키퍼
-            { x: 0.3, y: 0.2 }, { x: 0.3, y: 0.4 }, { x: 0.3, y: 0.6 }, { x: 0.3, y: 0.8 }, // 수비수 4명
-            { x: 0.5, y: 0.2 }, { x: 0.5, y: 0.4 }, { x: 0.5, y: 0.6 }, { x: 0.5, y: 0.8 }, // 미드필더 4명
-            { x: 0.7, y: 0.4 }, { x: 0.7, y: 0.6 }, // 공격수 2명
-        ];
-
-        // 경기장에 공 추가
-        function addBallsToStadium() {
-            const stadium = document.querySelector('.stadium');
-            formation442.forEach((position, index) => {
-                const ball = document.createElement('div');
-                ball.classList.add('ball');
-                ball.style.left = `${position.x * 100}%`;
-                ball.style.top = `${position.y * 100}%`;
-                ball.setAttribute('title', `Player ${index + 1}`);
-                stadium.appendChild(ball);
-            });
-        }
 
         // DOMContentLoaded 이벤트
         document.addEventListener('DOMContentLoaded', addBallsToStadium);
